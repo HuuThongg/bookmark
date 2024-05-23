@@ -1,0 +1,5 @@
+to create a new table,
+ cd db/migrations
+ goose create add_table sql
+
+https://app.mailjet.com/auth/password/reset/678628fbd5134a96988fec27992ffab0
