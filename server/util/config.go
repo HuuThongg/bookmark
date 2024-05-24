@@ -22,6 +22,8 @@ type Config struct {
 	VultrAccessKey         string        `mapstructure:"vultrAccessKey"`
 	VultrSecretKey         string        `mapstructure:"vultrSecretKey"`
 	VultrHostname          string        `mapstructure:"vultrHostname"`
+	BlackBlazeSecretKey    string        `mapstructure:"blackBlazeSecretKey"`
+	BlackBlazeKeyId        string        `mapstructure:"blackBlazeKeyId"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

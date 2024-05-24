@@ -58,6 +58,9 @@ func Router() *chi.Mux {
 				r.Post("/", h.CreateFolder)
 			})
 		})
+		r.Route("/link", func(r chi.Router) {
+			r.Post("/add", h.AddLink)
+		})
 	})
 	return r
 }
