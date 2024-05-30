@@ -31,10 +31,10 @@ func UploadLinkThumbnail(linkThumbnailChannel chan string) {
 	}
 
 	s3Config := &aws.Config{
-		Credentials:      credentials.NewStaticCredentials(config.VultrAccessKey, config.VultrSecretKey, ""),
-		Endpoint:         aws.String("https://ewr1.vultrobjects.com/"),
+		Credentials:      credentials.NewStaticCredentials(config.BlackBlazeKeyId, config.BlackBlazeSecretKey, ""),
+		Endpoint:         aws.String("https://s3.us-west-002.backblazeb2.com"),
 		S3ForcePathStyle: aws.Bool(false),
-		Region:           aws.String("ewr"),
+		Region:           aws.String("us-west-002"),
 	}
 
 	newSession, err := session.NewSession(s3Config)
@@ -46,13 +46,13 @@ func UploadLinkThumbnail(linkThumbnailChannel chan string) {
 		Bucket: aws.String("/link-thumbnails"),
 		Key:    aws.String(uuid.NewString()),
 		Body:   <-imgFileChan,
-		ACL:    aws.String("public-read"),
+		// ACL:    aws.String("public-reaç"),
 	}
 	_, err = s3Client.PutObject(&object)
 	if err != nil {
 		log.Panicf("could not upload link thumbnail to vultr: %v", err)
 	}
-	log.Printf("link thumbnail url: %s", fmt.Sprintf("https://ewr1.vultrobjects.com/link-thumbnails/%s", *object.Key))
-	linkThumbnailChannel <- fmt.Sprintf("https://ewr.vultrobjects.com/link-thumbnails/%s", *object.Key)
+	log.Printf("link thumbnail url: %s", fmt.Sprintf("https://s3.us-west-002.backblazeb2.com/%s", *object.Key))
+	linkThumbnailChannel <- fmt.Sprintf("https://s3.us-west-002.backblazeb2.com/link-thumbnails/%s", *object.Key)
 	wg.Wait()
 }

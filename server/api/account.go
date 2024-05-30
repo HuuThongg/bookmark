@@ -338,3 +338,21 @@ func loginUser(account sqlc.Account, w http.ResponseWriter, h *BaseHandler, conf
 
 	util.JsonResponse(w, res)
 }
+
+func (h *BaseHandler) GetAllAccounts(w http.ResponseWriter, r *http.Request) {
+	q := sqlc.New(h.db)
+
+	accounts, err := q.GetAllAccounts(r.Context())
+	if err != nil {
+		log.Println(err)
+		util.Response(w, errors.New("something went wrong").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(accounts) == 0 {
+		util.Response(w, errors.New("no accounts found").Error(), http.StatusNotFound)
+		return
+	}
+
+	util.JsonResponse(w, accounts)
+}

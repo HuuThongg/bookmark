@@ -6,9 +6,9 @@
 	addLinkMode.set(true);
 </script>
 
-<!-- {#if $createFolderMode} -->
-<!-- 	<CreateFolderForm /> -->
-<!-- {/if} -->
+{#if $createFolderMode}
+	<CreateFolderForm />
+{/if}
 
 {#if $addLinkMode}
 	<AddLinkForm />

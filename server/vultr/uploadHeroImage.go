@@ -2,10 +2,10 @@ package vultr
 
 import (
 	"fmt"
-	"go-bookmark/util"
 	"log"
 	"os"
-	"sync"
+
+	"go-bookmark/util"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -14,22 +14,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func UploadLinkFavicon(linkFaviconChannel chan string) {
-
-	log.Println("uploading link favicon...")
-	imgFileChan := make(chan *os.File, 1)
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := util.LoadImage(imgFileChan, "favicon.ico"); err != nil {
-			log.Panicf("could not load link favicon :%v", err)
-		}
-	}()
-
+func UploadHeroImage(heroImage *os.File) string {
 	config, err := util.LoadConfig(".")
 	if err != nil {
-		log.Panicf("could not load config file: %v", err)
+		log.Panicf("could not load conig file: %v", err)
 	}
 
 	s3Config := &aws.Config{
@@ -43,20 +31,20 @@ func UploadLinkFavicon(linkFaviconChannel chan string) {
 	if err != nil {
 		log.Panicf("could not create new vultr s3 session: %v", err)
 	}
+
 	s3Client := s3.New(newSession)
+
 	object := s3.PutObjectInput{
-		Bucket: aws.String("/link-favicons"),
+		Bucket: aws.String("/app-assets"),
 		Key:    aws.String(uuid.NewString()),
-		Body:   <-imgFileChan,
+		Body:   heroImage,
 		// ACL:    aws.String("public-read"),
 	}
 
 	_, err = s3Client.PutObject(&object)
 	if err != nil {
-		log.Panicf("could not upload link favicon to vultr: %v", err)
+		log.Panicf("could not upload hero image to app-assets bucket: %v", err)
 	}
-	log.Printf("link favicon url: %s", fmt.Sprintf("https:/s3.us-west-002.backblazeb2.com/link-favicons/%s", *object.Key))
-	linkFaviconChannel <- fmt.Sprintf("https://s3.us-west-002.backblazeb2.com/link-favicons/%s", *object.Key)
-	wg.Wait()
-	log.Println("successfully uploaded link favicon")
+
+	return fmt.Sprintf("https://s3.us-west-002.backblazeb2.com/app-assets/%s", *object.Key)
 }
