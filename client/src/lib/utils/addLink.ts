@@ -15,6 +15,7 @@ export async function addLink(url: string, folderID: string) {
     errorInvalidUrl = 'Please enter a valid url'
     return
   }
+  console.log("folderID", folderID)
 
   // showLoadingToss()
   addLinkMode.set(false)

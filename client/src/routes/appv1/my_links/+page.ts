@@ -72,7 +72,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
 
       console.log("result\n", result[0])
       folders = result[0].folders;
-      links = result[0].folders;
+      links = result[0].links;
       return { links, folders }
     }
   }

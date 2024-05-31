@@ -80,7 +80,7 @@ func Router() *chi.Mux {
 			r.Patch("/move", h.MoveLinks)
 			r.Patch("/moveLinksToTrash", h.MoveLinksToTrash)
 			r.Patch("/restoreLinksFromTrash", h.RestoreLinksFromTrash)
-			r.Delete("deleteLinksForever", h.DeleteLinksForever)
+			r.Delete("/deleteLinksForever", h.DeleteLinksForever)
 			r.Get("/getRootLinks/{accountID}", h.GetRootLinks)
 			r.Get("/get_folder_links/{accountID}/{folderID}", h.GetFolderLinks)
 			r.Get("/searchLinks/{query}", h.SearchLinks)

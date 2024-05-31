@@ -220,6 +220,7 @@ func (h *BaseHandler) AddLink(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	linkID := <-stringChan
+	log.Printf("link ID : %v", linkID)
 	addLinkParams := sqlc.AddLinkParams{
 		LinkID:        linkID,
 		LinkTitle:     urlTitle,
