@@ -17,6 +17,7 @@
 
 {#if $selectedFolders.length > 0 || $selectedLinks.length > 0}
 	<div class="actions_menu">
+		<div>actionsMenu</div>
 		{#if $page.url.pathname === '/appv1/my_links/trash'}
 			<div
 				class="restore"

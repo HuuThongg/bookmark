@@ -13,6 +13,7 @@
 </script>
 
 <div class="breadcrumb">
+	<div>breadcrumb</div>
 	<nav>
 		<ul>
 			<li on:click|preventDefault|stopPropagation={handleGoBackToRoot} on:keyup>

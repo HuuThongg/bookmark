@@ -28,5 +28,3 @@
 	<title>Home - Linkspace</title>
 </svelte:head>
 <Breadcrumb />
-<!-- <div>my link</div> -->
-<!-- <div>{JSON.stringify(data.folders)}</div> -->

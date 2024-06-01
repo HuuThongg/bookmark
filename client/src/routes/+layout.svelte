@@ -41,7 +41,7 @@
 <Checkmark />
 <ThankYou />
 <Sucess />
-<Loading />
+<!-- <Loading /> -->
 {#if $errors.length > 0}
 	<Errors />
 {/if}

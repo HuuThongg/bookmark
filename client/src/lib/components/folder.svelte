@@ -1,11 +1,23 @@
 <script lang="ts">
 	import type { Folder } from '$lib/types/folder';
-	import { apiURL, foldersCut, selectedFolders } from '../../stores/stores';
+	import {
+		foldersCut,
+		controlKeyIsPress,
+		selectedLinks,
+		selectedFolders,
+		showFolderInTrashAlert,
+		currentCollectionMember,
+		loading,
+		breadcrumbRoot,
+		apiURL
+	} from './../../stores/stores';
 
 	import { dragFolder } from '$lib/utils/dragFolder';
 	import { ListenToDrop } from '$lib/utils/handleElementDrop';
 	import { FolderDragOver } from '$lib/utils/handleFolderDragOver';
 	import { FolderDragLeave } from '$lib/utils/handleFolderDragLeave';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	export let folder: Partial<Folder>;
 
 	let folderSelected: Partial<Folder> = {};
@@ -20,8 +32,35 @@
 
 	getBaseUrl();
 
-	function handleCheckBoxClick() {
+	function handleCheckBoxClick(event: MouseEvent) {
 		console.log('handleCheckBoxClick');
+		if (
+			$currentCollectionMember.collectin_access_level !== undefined &&
+			$currentCollectionMember.collectin_access_level === 'view'
+		)
+			return;
+
+		const checkBox = event.currentTarget as HTMLDivElement | null;
+		if (checkBox === null) return;
+		subfolderOf = checkBox.dataset.subfolderOf;
+		if (subfolderOf === undefined) return;
+		folderSelected = {
+			folder_id: checkBox?.dataset.folderid,
+			folder_name: checkBox?.dataset.foldername,
+			subfolder_of:
+				subfolderOf === ''
+					? { String: subfolderOf, Valid: false }
+					: { String: subfolderOf, Valid: true }
+		};
+		if ($selectedFolders.map((f) => f.folder_id).includes(folderSelected.folder_id)) {
+			removeFolderFromSelectedFolders(folderSelected);
+		} else {
+			appendFolderToSelectedFolders(folderSelected);
+		}
+		// hideContextMenu();
+
+		// hideMenuBar();
+		console.log('selectedFolders', $selectedFolders);
 	}
 	function appendFolderToSelectedFolders(folder: Partial<Folder>) {
 		$selectedFolders = [...$selectedFolders, folder];
@@ -36,7 +75,24 @@
 	function handleFolderContextMenu(e: MouseEvent) {
 		console.log('handleFolderContextMenu');
 	}
-	function handleClickOnFolderName() {
+	function handleClickOnFolderName(event: MouseEvent) {
+		//hideMenuBar
+		const getCurrentPath = page.subscribe((value) => (path = value.url.pathname));
+		getCurrentPath();
+
+		if (path === '/appv1/my_links/trash') {
+			showFolderInTrashAlert.set(true);
+			return;
+		}
+
+		const target = event.currentTarget as HTMLSpanElement;
+		const folder = target.closest('.folder') as HTMLDivElement;
+
+		const folderID: string | undefined = folder.dataset.folderid;
+
+		if (folderID === undefined) return;
+
+		goto(`${$page.url.origin}/appv1/my_links/${folderID}`);
 		console.log('handleClickOnFolderName');
 	}
 	function handleFolderDragEnd(e: DragEvent) {
@@ -59,7 +115,6 @@
 	data-subfolderof={folder.subfolder_of?.String}
 	class:folder-selected={$selectedFolders.map((f) => f.folder_id).includes(folder.folder_id)}
 	on:click|preventDefault|stopPropagation={handleFolderClick}
-	on:keyup
 	on:contextmenu|preventDefault|stopPropagation={handleFolderContextMenu}
 	on:dragstart={dragFolder}
 	on:dragover|preventDefault={FolderDragOver}
@@ -206,7 +261,6 @@
 					font-family: 'Arial CE', sans-serif;
 					color: $text-color-medium;
 					font-size: 1.2rem;
-					display: none;
 				}
 			}
 		}

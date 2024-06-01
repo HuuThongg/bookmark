@@ -539,6 +539,7 @@ func (h *BaseHandler) MoveFolders(w http.ResponseWriter, r *http.Request) {
 	rBody := json.NewDecoder(r.Body)
 	rBody.DisallowUnknownFields()
 
+	log.Println("move folders")
 	var req moveFoldersRequest
 
 	err := rBody.Decode(&req)
